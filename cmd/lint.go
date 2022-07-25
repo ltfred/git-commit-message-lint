@@ -75,7 +75,6 @@ func lint(cmd *cobra.Command, args []string) {
 		t.Color("%-10s %s\n", fmt.Sprintf("%d."+t.Type, i), t.Des)
 	}
 	var num int
-	var msg string
 	fmt.Print("请选择一个type: ")
 	_, err := fmt.Scanln(&num)
 	if err != nil {
@@ -83,7 +82,11 @@ func lint(cmd *cobra.Command, args []string) {
 	}
 	fmt.Print("请输入message: ")
 	reader := bufio.NewReader(os.Stdin)
-	msg, _ = reader.ReadString('\n')
+	msg, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	m := typeAndDes[num].Type + ": " + msg
 	command := exec.Command("git", "add", ".")
 	command.Stdin = os.Stdin
